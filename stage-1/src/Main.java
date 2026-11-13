@@ -5,24 +5,26 @@ public class Main {
         menu.addItem(new MenuItem("Burger", 1500, 1));
         menu.addItem(new MenuItem("Pasta", 1800, 2));
         Restaurant restaurant = new Restaurant(menu, 2);
+        ArrivalSchedule schedule = new ArrivalSchedule();
+        Waiter waiter = new Waiter();
+        Chef chef = new Chef();
+        Cashier cashier = new Cashier();
 
-        Customer c1 = new Customer(1);
-        restaurant.addCustomer(c1);
-        System.out.println(c1 + " arrives: " + c1.getState());
-        System.out.println(restaurant.seatCustomer(1));
-
-        MenuItem dish = c1.chooseItem(menu);
-        c1.placeOrder(new Order(dish, c1.calculateBill(dish.getPriceCents())));
-        System.out.println(c1 + " ordered " + c1.getOrder());
-
-        while (c1.getOrder().getStatus() == OrderStatus.PREPARING) {
-            c1.getOrder().prepareOneUnit();
-            System.out.println("  cooking... " + c1.getOrder());
+        for (int turn = 1; turn <= 6; turn++) {
+            System.out.println("--- Turn " + turn + " ---");
+            Customer arriving = schedule.customerArrivingOn(turn);
+            if (arriving != null) restaurant.addCustomer(arriving);
+            switch (turn) {
+                case 1 -> System.out.println(waiter.seat(restaurant, 1));
+                case 2 -> System.out.println(waiter.takeOrder(restaurant, 1));
+                case 3 -> System.out.println(chef.prepare(restaurant, 1));
+                case 4 -> System.out.println(waiter.serve(restaurant, 1, turn));
+                case 5 -> restaurant.findCustomer(1).finishEating();
+                case 6 -> System.out.println(cashier.collectPayment(restaurant));
+            }
+            for (Customer c : restaurant.getCustomers())
+                System.out.println("  " + c + " " + c.getState() + ", satisfaction " + c.getSatisfaction());
         }
-        c1.receiveFood(1);
-        c1.finishEating();
-        restaurant.addRevenue(c1.getOrder().getPriceCents());
-        c1.pay();
-        System.out.println(c1 + " is " + c1.getState() + ", revenue " + Money.format(restaurant.getRevenueCents()));
+        System.out.println("Revenue: " + Money.format(restaurant.getRevenueCents()));
     }
 }
