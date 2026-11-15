@@ -85,11 +85,11 @@ Compare locally: `diff -r stage-1/src stage-2/src` and `diff -r stage-2/src stag
 
 | # | Segment | Time | Presenter |
 |---|---|---|---|
-| 1 | Game overview and the three stages | TODO | Hao Lin |
-| 2 | Gameplay demonstration and key outcomes | TODO | Nishant |
-| 3 | Class diagrams and evidence of stage changes | TODO | Trevor |
-| 4 | Use case and sequence diagram | TODO | Jin Sheng |
-| 5 | Individual contributions and key learning | TODO | Zheng Rong |
+| 1 | Game overview and the three stages | 00:00 | Hao Lin |
+| 2 | Gameplay demonstration and key outcomes | 02:18 | Nishant |
+| 3 | Class diagrams and evidence of stage changes | 09:43 | Trevor |
+| 4 | Use case and sequence diagram | 13:04 | Jin Sheng |
+| 5 | Individual contributions and key learning | 19:04 | Zheng Rong |
 
 ## AI history
 
@@ -99,3 +99,5 @@ Compare locally: `diff -r stage-1/src stage-2/src` and `diff -r stage-2/src stag
 | Yim Zheng Rong | [ai-history](https://github.com/nishant1122/RestaurantRush_SC2002/blob/Yim-Zheng-Rong/ai-history%3Astage-2/chat.md) |
 | Hao Lin | [ai-history](https://github.com/nishant1122/RestaurantRush_SC2002/blob/Hao-Lin/ai-history/report/chat.md) |
 | Jin Sheng | [ai-history](https://github.com/nishant1122/RestaurantRush_SC2002/blob/jinsheng/ai-history/sequence/chat.md) |
+| Trevor Teo | [ai-history](https://github.com/nishant1122/RestaurantRush_SC2002/blob/trevor/ai-history/class-diagram/chat.md) |
+
