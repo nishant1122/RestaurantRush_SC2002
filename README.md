@@ -88,7 +88,7 @@ Compare locally: `diff -r stage-1/src stage-2/src` and `diff -r stage-2/src stag
 | 1 | Game overview and the three stages | TODO | Hao Lin |
 | 2 | Gameplay demonstration and key outcomes | TODO | Nishant |
 | 3 | Class diagrams and evidence of stage changes | TODO | Trevor |
-| 4 | Use case and sequence diagram | TODO | TODO |
+| 4 | Use case and sequence diagram | TODO | Jin Sheng |
 | 5 | Individual contributions and key learning | TODO | Zheng Rong |
 
 ## AI history
