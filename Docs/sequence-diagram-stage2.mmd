@@ -1,0 +1,59 @@
+---
+title: "Stage 2 use case - Serve a VIP customer from arrival to payment (stage-2/tests/victory.txt, turns 4-8)"
+---
+sequenceDiagram
+    autonumber
+    actor M as Manager (via ConsoleUI)
+    participant GC as :GameController
+    participant R as :Restaurant
+    participant W as :Waiter
+    participant CH as :Chef
+    participant CA as :Cashier
+    participant V as c2:VIPCustomer
+    participant O as o:Order
+
+    Note over GC,V: Turn 4 - C2 arrives and is seated
+    GC->>R: addCustomer(new VIPCustomer(2))
+    M->>GC: Waiter task 1 (Seat), customer 2
+    GC->>W: seat(r, 2)
+    W->>R: seatCustomer(2)
+    alt Table 2 free and C2 WAITING
+        R->>V: sitAt(table2)
+    else no free table or not WAITING
+        R-->>GC: IllegalArgumentException, ask again
+    end
+
+    Note over GC,O: Turn 5 - order at VIP price, Chef cooks
+    M->>GC: Waiter task 2 (Take order), customer 2
+    GC->>W: takeOrder(r, 2)
+    W->>V: calculateBill(1500)
+    V-->>W: 1350 (VIP override, 10% off)
+    W->>O: new Order(Burger, 1350)
+    W->>V: placeOrder(o)
+    M->>GC: Chef cooks customer 2
+    GC->>CH: prepare(r, 2)
+    CH->>O: prepareOneUnit()
+    Note right of O: 1/1 units, READY
+
+    loop end of turns 4 and 5, while c2.isWaitingForService()
+        GC->>V: loseSatisfaction()
+        Note right of V: VIP loses 5 (Regular 8): 100, 95, 90
+    end
+
+    Note over GC,O: Turn 6 - serve
+    M->>GC: Waiter task 3 (Serve), customer 2
+    GC->>W: serve(r, 2, 6)
+    W->>V: receiveFood(6)
+    V->>O: markServed()
+
+    Note over GC,V: Turn 7 - finish eating
+    opt c2.getServedTurn() < turn
+        GC->>V: finishEating()
+    end
+
+    Note over GC,O: Turn 8 - payment, oldest READY_TO_PAY first
+    GC->>CA: collectPayment(r)
+    CA->>R: addRevenue(1350)
+    CA->>V: pay()
+    V->>O: markPaid()
+    Note right of V: PAID at satisfaction 90, Table 2 freed

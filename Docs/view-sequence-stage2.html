@@ -1,0 +1,75 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Stage 2 Sequence Diagram</title>
+<style>body{font-family:sans-serif;background:#fff;margin:16px}button{margin:4px 8px 12px 0;padding:6px 12px}</style></head><body>
+<p>Needs internet once to load Mermaid.</p>
+<button onclick="png()">Download PNG</button><button onclick="svg()">Download SVG</button>
+<pre class="mermaid" id="d">---
+title: &quot;Stage 2 use case - Serve a VIP customer from arrival to payment (stage-2/tests/victory.txt, turns 4-8)&quot;
+---
+sequenceDiagram
+    autonumber
+    actor M as Manager (via ConsoleUI)
+    participant GC as :GameController
+    participant R as :Restaurant
+    participant W as :Waiter
+    participant CH as :Chef
+    participant CA as :Cashier
+    participant V as c2:VIPCustomer
+    participant O as o:Order
+
+    Note over GC,V: Turn 4 - C2 arrives and is seated
+    GC-&gt;&gt;R: addCustomer(new VIPCustomer(2))
+    M-&gt;&gt;GC: Waiter task 1 (Seat), customer 2
+    GC-&gt;&gt;W: seat(r, 2)
+    W-&gt;&gt;R: seatCustomer(2)
+    alt Table 2 free and C2 WAITING
+        R-&gt;&gt;V: sitAt(table2)
+    else no free table or not WAITING
+        R--&gt;&gt;GC: IllegalArgumentException, ask again
+    end
+
+    Note over GC,O: Turn 5 - order at VIP price, Chef cooks
+    M-&gt;&gt;GC: Waiter task 2 (Take order), customer 2
+    GC-&gt;&gt;W: takeOrder(r, 2)
+    W-&gt;&gt;V: calculateBill(1500)
+    V--&gt;&gt;W: 1350 (VIP override, 10% off)
+    W-&gt;&gt;O: new Order(Burger, 1350)
+    W-&gt;&gt;V: placeOrder(o)
+    M-&gt;&gt;GC: Chef cooks customer 2
+    GC-&gt;&gt;CH: prepare(r, 2)
+    CH-&gt;&gt;O: prepareOneUnit()
+    Note right of O: 1/1 units, READY
+
+    loop end of turns 4 and 5, while c2.isWaitingForService()
+        GC-&gt;&gt;V: loseSatisfaction()
+        Note right of V: VIP loses 5 (Regular 8): 100, 95, 90
+    end
+
+    Note over GC,O: Turn 6 - serve
+    M-&gt;&gt;GC: Waiter task 3 (Serve), customer 2
+    GC-&gt;&gt;W: serve(r, 2, 6)
+    W-&gt;&gt;V: receiveFood(6)
+    V-&gt;&gt;O: markServed()
+
+    Note over GC,V: Turn 7 - finish eating
+    opt c2.getServedTurn() &lt; turn
+        GC-&gt;&gt;V: finishEating()
+    end
+
+    Note over GC,O: Turn 8 - payment, oldest READY_TO_PAY first
+    GC-&gt;&gt;CA: collectPayment(r)
+    CA-&gt;&gt;R: addRevenue(1350)
+    CA-&gt;&gt;V: pay()
+    V-&gt;&gt;O: markPaid()
+    Note right of V: PAID at satisfaction 90, Table 2 freed
+</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({startOnLoad:true,theme:'default'});
+function getSvg(){return document.querySelector('#d svg');}
+function save(url,name){const a=document.createElement('a');a.href=url;a.download=name;a.click();}
+function svgText(){const s=getSvg().cloneNode(true);s.setAttribute('xmlns','http://www.w3.org/2000/svg');return new XMLSerializer().serializeToString(s);}
+function svg(){save(URL.createObjectURL(new Blob([svgText()],{type:'image/svg+xml'})),'sequence-diagram-stage2.svg');}
+function png(){const s=getSvg(),r=s.getBoundingClientRect(),k=2;const img=new Image();
+ img.onload=()=>{const c=document.createElement('canvas');c.width=r.width*k;c.height=r.height*k;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);save(c.toDataURL('image/png'),'sequence-diagram-stage2.png');};
+ img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgText());}
+</script></body></html>
