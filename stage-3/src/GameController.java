@@ -32,6 +32,20 @@ public class GameController {
         if (arrival != null) {
             ui.showMessage(">> " + arrival + " arrives and joins the queue.");
         }
+        
+        HappyHour happyHour = restaurant.getHappyHour();
+        if (happyHour.canActivate() && ui.askHappyHour()) {
+            happyHour.activate();
+            ui.showMessage(">> Happy Hour is ON for this turn and the next: 20% off new orders.");
+        }
+        if (happyHour.isActive()) {
+            for (Customer c : restaurant.getCustomers()) {
+                if (c.isWaitingForService()) {
+                    c.recoverSatisfaction(HappyHour.RECOVERY);
+                    ui.showMessage(">> Happy Hour: " + c + " recovers to satisfaction " + c.getSatisfaction() + ".");
+                }
+            }
+        }
 
         hostStep();
         waiterStep(turn);
@@ -57,6 +71,7 @@ public class GameController {
                 }
             }
         }
+        happyHour.endTurn();
         ui.showTurnEnd(turn, restaurant);
     }
 

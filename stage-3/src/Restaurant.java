@@ -6,6 +6,7 @@ public class Restaurant {
     private final List<Table> tables = new ArrayList<>();
     private final List<Customer> customers = new ArrayList<>(); // everyone who arrived, in arrival order
     private int revenueCents = 0;
+    private final HappyHour happyHour = new HappyHour();
 
     public Restaurant(Menu menu, int tableCount) {
         this.menu = menu;
@@ -95,6 +96,10 @@ public class Restaurant {
             total += c.getSatisfaction();
         }
         return (double) total / paid.size();
+    }
+
+    public HappyHour getHappyHour(){
+        return happyHour;
     }
 
     public Menu getMenu() { return menu; }

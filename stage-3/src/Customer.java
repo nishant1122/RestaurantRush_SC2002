@@ -75,6 +75,10 @@ public class Customer {
         satisfaction = Math.max(0, satisfaction - getSatisfactionLoss());
     }
 
+    public void recoverSatisfaction(int amount){
+        satisfaction = Math.min(100, satisfaction+amount);
+    }
+    
     public boolean isWaitingForService() {
         return state == CustomerState.WAITING || state == CustomerState.SEATED || state == CustomerState.ORDERED;
     }

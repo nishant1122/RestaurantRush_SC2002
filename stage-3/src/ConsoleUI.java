@@ -30,6 +30,13 @@ public class ConsoleUI {
         System.out.println("================ TURN " + turn + " / " + GameController.MAX_TURNS + " ================");
         System.out.println("Revenue: " + Money.format(r.getRevenueCents())
                 + "   Avg satisfaction (paid): " + formatAverage(r.getAverageSatisfaction()));
+        HappyHour hh = r.getHappyHour();
+        if(hh.isActive()){
+            System.out.println("Happy Hour: ACTIVE, " + hh.getTurnsLeft() + " turn(s) left including this one");
+        }
+        else{
+            System.out.println("Happy Hour: " + (hh.canActivate() ? "available (once per game)" : "used"));
+        }
         System.out.println("Waiting queue: " + listCustomers(r.getWaitingQueue()));
         for (Table t : r.getTables()) {
             Customer c = t.getCustomer();
@@ -84,6 +91,22 @@ public class ConsoleUI {
     public int askHostTask() {
         return readInt("Host: customer number to seat (0 = wait): ");
     }
+
+    public boolean askHappyHour() {
+    while (true) {
+        System.out.print("Start Happy Hour now? (y/n): ");
+        if (!scanner.hasNextLine()) {
+            System.out.println("(no more input - choosing n)");
+            return false;
+        }
+        String line = scanner.nextLine().trim().toLowerCase();
+        System.out.println(line);
+        if (line.equals("y") || line.equals("n")) {
+            return line.equals("y");
+        }
+        System.out.println("  !! Please type y or n.");
+    }
+}
 
     private int readInt(String prompt) {
         while (true) {

@@ -11,8 +11,10 @@ public class Waiter {
         }
         MenuItem item = customer.chooseItem(restaurant.getMenu());
         int price = customer.calculateBill(item.getPriceCents()); // each customer type prices its own bill
+        price = restaurant.getHappyHour().applyDiscount(price);
         customer.placeOrder(new Order(item, price));
-        return customer + " orders " + item.getName() + " for " + Money.format(price) + ".";
+        String note = restaurant.getHappyHour().isActive() ? " (Happy hour price)" : "";
+        return customer + " orders " + item.getName() + " for " + Money.format(price) + note + ".";
     }
 
     public String serve(Restaurant restaurant, int customerId, int turn) {
