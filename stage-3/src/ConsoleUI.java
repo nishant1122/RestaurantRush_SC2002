@@ -42,6 +42,7 @@ public class ConsoleUI {
             }
         }
         System.out.println("Staff tasks available:");
+        System.out.println("  Host   -> seat: " + listCustomers(r.getWaitingQueue()));
         System.out.println("  Waiter -> seat: " + listCustomers(r.getWaitingQueue())
                 + " | take order: " + listCustomers(r.getCustomersInState(CustomerState.SEATED))
                 + " | serve: " + listCustomers(r.getCustomersWithOrder(OrderStatus.READY)));
@@ -78,6 +79,10 @@ public class ConsoleUI {
 
     public int askChefTask() {
         return readInt("Chef: customer number whose order to cook (0 = wait): ");
+    }
+
+    public int askHostTask() {
+        return readInt("Host: customer number to seat (0 = wait): ");
     }
 
     private int readInt(String prompt) {

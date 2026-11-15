@@ -8,6 +8,7 @@ public class GameController {
     private final Waiter waiter = new Waiter();
     private final Chef chef = new Chef();
     private final Cashier cashier = new Cashier();
+    private final Host host = new Host();
 
     public GameController(Restaurant restaurant, ConsoleUI ui) {
         this.restaurant = restaurant;
@@ -32,6 +33,7 @@ public class GameController {
             ui.showMessage(">> " + arrival + " arrives and joins the queue.");
         }
 
+        hostStep();
         waiterStep(turn);
         chefStep();
 
@@ -46,7 +48,6 @@ public class GameController {
             }
         }
 
-        // Step 5: waiting customers lose satisfaction and may leave
         for (Customer c : restaurant.getCustomers()) {
             if (c.isWaitingForService()) {
                 c.loseSatisfaction();
@@ -103,6 +104,23 @@ public class GameController {
             }
         }
     }
+
+    private void hostStep() {
+    while (true) {
+        int id = ui.askHostTask();
+        if (id == 0) {
+            ui.showMessage(">> Host waits.");
+            return;
+        }
+        try {
+            ui.showMessage(">> Host: " + host.seat(restaurant, id));
+            return;
+        } catch (IllegalArgumentException e) {
+            ui.showError(e.getMessage());
+        }
+    }
+}
+
 
     private boolean isVictory() {
         return restaurant.getPaidCount() >= 4
