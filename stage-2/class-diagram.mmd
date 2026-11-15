@@ -1,0 +1,211 @@
+---
+title: Restaurant Rush - Stage 2 Class Diagram
+---
+classDiagram
+    direction TB
+
+    namespace Application {
+        class Main {
+            +main(args: String[]) void$
+        }
+        class GameController {
+            +MAX_TURNS: int
+            -Restaurant restaurant
+            -ConsoleUI ui
+            -ArrivalSchedule schedule
+            -Waiter waiter
+            -Chef chef
+            -Cashier cashier
+            +play() void
+            -playTurn(turn: int) void
+            -waiterStep(turn: int) void
+            -chefStep() void
+            -isVictory() boolean
+        }
+        class ConsoleUI {
+            -Scanner scanner
+            +showMessage(message: String) void
+            +showError(message: String) void
+            +showWelcome(menu: Menu) void
+            +showTurnStart(turn: int, r: Restaurant) void
+            +showTurnEnd(turn: int, r: Restaurant) void
+            +showResult(victory: boolean, r: Restaurant) void
+            +askWaiterTask() int
+            +askCustomerId() int
+            +askChefTask() int
+            -readInt(prompt: String) int
+        }
+    }
+
+    namespace Staff {
+        class Waiter {
+            +seat(restaurant: Restaurant, customerId: int) String
+            +takeOrder(restaurant: Restaurant, customerId: int) String
+            +serve(restaurant: Restaurant, customerId: int, turn: int) String
+        }
+        class Chef {
+            +prepare(restaurant: Restaurant, customerId: int) String
+        }
+        class Cashier {
+            +collectPayment(restaurant: Restaurant) String
+        }
+        class ArrivalSchedule {
+            +customerArrivingOn(turn: int) Customer
+        }
+    }
+
+    namespace Domain {
+        class Restaurant {
+            -Menu menu
+            -List~Table~ tables
+            -List~Customer~ customers
+            -int revenueCents
+            +addCustomer(customer: Customer) void
+            +seatCustomer(customerId: int) String
+            +findCustomer(id: int) Customer
+            +findFreeTable() Table
+            +addRevenue(cents: int) void
+            +getCustomersInState(state: CustomerState) List~Customer~
+            +getWaitingQueue() List~Customer~
+            +getCustomersWithOrder(status: OrderStatus) List~Customer~
+            +getPaidCount() int
+            +getLeftCount() int
+            +getServedCount() int
+            +getAverageSatisfaction() double
+            +getMenu() Menu
+            +getTables() List~Table~
+            +getCustomers() List~Customer~
+            +getRevenueCents() int
+        }
+        class Customer {
+            -int id
+            -int satisfaction
+            -CustomerState state
+            -Table table
+            -Order order
+            -int servedTurn
+            +getType() String
+            +getSatisfactionLoss() int
+            +calculateBill(basePriceCents: int) int
+            +chooseItem(menu: Menu) MenuItem
+            +sitAt(table: Table) void
+            +placeOrder(order: Order) void
+            +receiveFood(turn: int) void
+            +finishEating() void
+            +pay() void
+            +leaveUnhappy() void
+            +loseSatisfaction() void
+            +isWaitingForService() boolean
+        }
+        class VIPCustomer {
+            +getType() String
+            +getSatisfactionLoss() int
+            +calculateBill(basePriceCents: int) int
+        }
+        class CriticCustomer {
+            +getType() String
+            +getSatisfactionLoss() int
+            +chooseItem(menu: Menu) MenuItem
+        }
+        class Table {
+            -int number
+            -Customer customer
+            +isFree() boolean
+            +seat(customer: Customer) void
+            +free() void
+            +getNumber() int
+            +getCustomer() Customer
+        }
+        class Order {
+            -MenuItem item
+            -int priceCents
+            -int unitsDone
+            -OrderStatus status
+            +prepareOneUnit() void
+            +markServed() void
+            +markPaid() void
+            +cancel() void
+            +getItem() MenuItem
+            +getPriceCents() int
+            +getStatus() OrderStatus
+        }
+        class Menu {
+            -List~MenuItem~ items
+            +addItem(item: MenuItem) void
+            +getItem(index: int) MenuItem
+            +size() int
+            +getItems() List~MenuItem~
+            +getMostExpensive() MenuItem
+        }
+        class MenuItem {
+            -String name
+            -int priceCents
+            -int prepUnits
+            +getName() String
+            +getPriceCents() int
+            +getPrepUnits() int
+        }
+        class CustomerState {
+            <<enumeration>>
+            WAITING
+            SEATED
+            ORDERED
+            EATING
+            READY_TO_PAY
+            PAID
+            LEFT
+        }
+        class OrderStatus {
+            <<enumeration>>
+            PREPARING
+            READY
+            SERVED
+            PAID
+            CANCELLED
+        }
+    }
+
+    class Money {
+        +format(cents: int) String$
+        +percent(cents: int, percent: int) int$
+    }
+
+    note for Main "Creates Menu (+items), Restaurant and ConsoleUI,\nthen launches the GameController."
+    note for Money "Static helpers used by MenuItem, Order, Waiter,\nCashier, ConsoleUI and VIPCustomer.\npercent() added in stage 2."
+
+    %% Spine: entry point -> controller
+    Main ..> GameController : launches
+
+    %% Controller is wired to its collaborators (unchanged from stage 1)
+    GameController --> Restaurant : controls
+    GameController *-- ConsoleUI
+    GameController *-- ArrivalSchedule
+    GameController *-- Waiter
+    GameController *-- Chef
+    GameController *-- Cashier
+
+    %% Staff and UI act on the restaurant
+    Waiter ..> Restaurant
+    Chef ..> Restaurant
+    Cashier ..> Restaurant
+    ConsoleUI ..> Restaurant : displays
+
+    %% Stage 2: inheritance - new types override Customer hooks
+    Customer <|-- VIPCustomer
+    Customer <|-- CriticCustomer
+
+    %% Stage 2: schedule is a factory for the three customer types
+    ArrivalSchedule ..> Customer : creates (regular)
+    ArrivalSchedule ..> VIPCustomer : creates (C2)
+    ArrivalSchedule ..> CriticCustomer : creates (C4)
+
+    %% Domain structure (unchanged from stage 1)
+    Restaurant *-- Menu
+    Restaurant *-- "1..*" Table
+    Restaurant o-- "0..*" Customer
+    Menu *-- "1..*" MenuItem
+    Customer --> "0..1" Table : sits at
+    Customer *-- "0..1" Order
+    Order --> MenuItem
+    Customer --> CustomerState
+    Order --> OrderStatus
