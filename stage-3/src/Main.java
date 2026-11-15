@@ -8,6 +8,8 @@ public class Main {
         menu.addItem(salad);
         menu.addItem(burger);
         menu.addItem(pasta);
+        menu.addItem(new ComboMeal(salad, pasta));
+        menu.addItem(new ComboMeal(burger, salad));
 
         Restaurant restaurant = new Restaurant(menu, 2);
         new GameController(restaurant, new ConsoleUI()).play();
