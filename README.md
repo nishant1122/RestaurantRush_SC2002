@@ -96,4 +96,4 @@ Compare locally: `diff -r stage-1/src stage-2/src` and `diff -r stage-2/src stag
 | Member | Link |
 |---|---|
 | Nishant | [ai-history](https://github.com/nishant1122/RestaurantRush_SC2002/blob/Nishant/ai-history/stage-1/chat.md) |
-| TODO | TODO |
+| Yim Zheng Rong | [ai-history](https://github.com/nishant1122/RestaurantRush_SC2002/blob/Yim-Zheng-Rong/ai-history%3Astage-2/chat.md) |
