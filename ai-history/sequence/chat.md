@@ -1,3 +1,5 @@
+### **Tool: Claude Sonnet 5.5**
+
 ## **Q1**
 
 Run me through the Satisfaction Loss logic for the Restaurant Rush game.
