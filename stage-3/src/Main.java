@@ -1,0 +1,17 @@
+public class Main {
+    public static void main(String[] args) {
+        MenuItem salad = new MenuItem("Salad", 900, 1);
+        MenuItem burger = new MenuItem("Burger", 1500, 1);
+        MenuItem pasta = new MenuItem("Pasta", 1800, 2);
+
+        Menu menu = new Menu();
+        menu.addItem(salad);
+        menu.addItem(burger);
+        menu.addItem(pasta);
+        menu.addItem(new ComboMeal(salad, pasta));
+        menu.addItem(new ComboMeal(burger, salad));
+
+        Restaurant restaurant = new Restaurant(menu, 2);
+        new GameController(restaurant, new ConsoleUI()).play();
+    }
+}
